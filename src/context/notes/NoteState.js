@@ -44,6 +44,9 @@ const NoteState = (props) => {
         "__v": 0
       }
       setNotes(notes.concat(note)) // .connat return new array where .push updated the array 
+
+      const json = response.json(); 
+      console.log(json);
     }
 
     // Delete Note -------------------------------------------------------------------
@@ -61,6 +64,9 @@ const NoteState = (props) => {
       console.log("Deleting "+ id);
       const newNote = notes.filter((note) => {return note._id !== id});
       setNotes(newNote);
+
+      const json = response.json(); 
+      console.log(json);
     }
 
     // Edit Note -------------------------------------------------------------------
@@ -68,7 +74,7 @@ const NoteState = (props) => {
 
       // API call
       const response = await fetch(`${host}/api/notes/updatenotes/${id}`, {
-        method: "POST", 
+        method: "PUT", 
         headers: {
           "Content-Type": "application/json",
           "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjY3MThjNDAzNjExZWJhZWMzNTY0MDI5In0sImlhdCI6MTcxODcxODE5OX0.iAC8bdOS5QGeJ4AJ9Hi37KR2Z4h2FXz_D28tTSZ-jIQ", 
@@ -76,16 +82,30 @@ const NoteState = (props) => {
         body: JSON.stringify({title, description, tag}), 
       });
       const json = response.json(); 
+      console.log(json);
+
+      let newNotes = JSON.parse(JSON.stringify(notes));
 
       // Logic to edit in client
+      for(let i=0; i < newNotes.length; i++){
+        const el = newNotes[i];
+        if(el._id === id){
+          newNotes[i].title = title;
+          newNotes[i].description = description;
+          newNotes[i].tag = tag;
+          break;
+        }
+      }
 
-       notes.forEach(element => {
-          if(element._id === id){
-            element.title = title; 
-            element.description = description; 
-            element.tag = tag; 
-          }
-       });
+      setNotes(newNotes)
+
+      //  notes.forEach(element => {
+      //     if(element._id === id){
+      //       element.title = title; 
+      //       element.description = description; 
+      //       element.tag = tag; 
+      //     }
+      //  });
     }
 
 
